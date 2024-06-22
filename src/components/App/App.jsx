@@ -1,51 +1,36 @@
 import './App.css';
 import { ContactForm, ContactList, SearchBox } from '../index';
-import contactsList from '../../datas/contacts.json';
-import { useEffect, useState } from 'react';
-
-const localStorageContactsKey = 'contacts';
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { addContact, deleteContact } from '../../redux/contactsSlice';
 
 const App = () => {
-  const [contacts, setContacts] = useState(() => {
-    const savedContacts = window.localStorage.getItem(localStorageContactsKey);
+  const dispatch = useDispatch();
+  const contacts = useSelector((state) => state.contacts.items);
 
-    if (savedContacts !== null) {
-      return JSON.parse(savedContacts);
-    }
-
-    return contactsList;
-  });
   const [filterValue, setFilterValue] = useState('');
 
-  const addContact = (newContact) => {
-    setContacts((prevContacts) => {
-      return [...prevContacts, newContact];
-    });
+  const handleAddContact = (newContact) => {
+    dispatch(addContact(newContact));
+  };
+
+  const handleDeleteContact = (contactId) => {
+    dispatch(deleteContact(contactId));
   };
 
   const searchContacts = contacts.filter(({ name }) =>
     name.toLowerCase().includes(filterValue.toLowerCase())
   );
 
-  const deletedContact = (contactId) => {
-    setContacts((prevContacts) => {
-      return prevContacts.filter(({ id }) => id !== contactId);
-    });
-  };
-
-  useEffect(() => {
-    window.localStorage.setItem(
-      localStorageContactsKey,
-      JSON.stringify(contacts)
-    );
-  }, [contacts]);
-
   return (
     <>
       <h1>Phonebook</h1>
-      <ContactForm addContact={addContact} />
+      <ContactForm addContact={handleAddContact} />
       <SearchBox value={filterValue} onFilter={setFilterValue} />
-      <ContactList contacts={searchContacts} deletedContact={deletedContact} />
+      <ContactList
+        contacts={searchContacts}
+        deletedContact={handleDeleteContact}
+      />
     </>
   );
 };
