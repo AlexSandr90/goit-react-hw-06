@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 const ContactList = ({ contacts, deletedContact }) => {
   return (
     <ul className={classes.contactList}>
-      {contacts.map((contact) => {
+      {contacts?.map((contact) => {
         return (
           <li className={classes.contact} key={contact.id}>
             <Contact deletedContact={deletedContact} {...contact} />
