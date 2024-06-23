@@ -1,14 +1,28 @@
+import { useDispatch, useSelector } from 'react-redux';
 import Contact from '../Contact/Contact';
 import classes from './ContactList.module.css';
-import PropTypes from 'prop-types';
+import { deleteContact } from '../../redux/contactsSlice';
+import { selectedContacts } from '../../redux/contactsSlice';
+import { selectedNameFilter } from '../../redux/filtersSlice';
 
-const ContactList = ({ contacts, deletedContact }) => {
+const ContactList = () => {
+  const dispatch = useDispatch();
+  const contacts = useSelector(selectedContacts);
+  const filterValue = useSelector(selectedNameFilter);
+
+  const handleDeleteContact = (contactId) => {
+    dispatch(deleteContact(contactId));
+  };
+
+  const searchContacts = contacts.filter(({ name }) =>
+    name?.toLowerCase().includes(filterValue?.toLowerCase())
+  );
   return (
     <ul className={classes.contactList}>
-      {contacts?.map((contact) => {
+      {searchContacts?.map((contact) => {
         return (
           <li className={classes.contact} key={contact.id}>
-            <Contact deletedContact={deletedContact} {...contact} />
+            <Contact deletedContact={handleDeleteContact} {...contact} />
           </li>
         );
       })}
@@ -17,8 +31,3 @@ const ContactList = ({ contacts, deletedContact }) => {
 };
 
 export default ContactList;
-
-ContactList.propTypes = {
-  contacts: PropTypes.array.isRequired,
-  deletedContact: PropTypes.func.isRequired,
-};
