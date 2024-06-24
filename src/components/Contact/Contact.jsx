@@ -2,8 +2,16 @@ import classes from './Contact.module.css';
 import { BsFillPersonFill, BsTelephoneFill } from 'react-icons/bs';
 import PropTypes from 'prop-types';
 import CustomButton from '../CustomButton/CustomButton';
+import { useDispatch } from 'react-redux';
+import { deleteContact } from '../../redux/contactsSlice';
 
-const Contact = ({ id, name, number, deletedContact }) => {
+const Contact = ({ id, name, number }) => {
+  const dispatch = useDispatch();
+
+  const handleDeleteContact = (contactId) => {
+    dispatch(deleteContact(contactId));
+  };
+
   return (
     <>
       <div className={classes.contactInfo}>
@@ -16,7 +24,10 @@ const Contact = ({ id, name, number, deletedContact }) => {
           <span>{number}</span>
         </div>
       </div>
-      <CustomButton buttonText={'Delete'} onClick={() => deletedContact(id)} />
+      <CustomButton
+        buttonText={'Delete'}
+        onClick={() => handleDeleteContact(id)}
+      />
     </>
   );
 };
@@ -27,5 +38,4 @@ Contact.propTypes = {
   id: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   number: PropTypes.string.isRequired,
-  deletedContact: PropTypes.func.isRequired,
 };
